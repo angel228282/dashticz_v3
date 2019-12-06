@@ -1,7 +1,9 @@
 var recurring = {};
 var allchannels = [];
 
-function addTVGuide(tvobject, tvObjorg) {
+function addTVGuide(tvobject, tvObjorg,key) {
+    console.log(key);
+    if(key != "MAGYAR"){
     if (typeof(allchannels[1]) === 'undefined') {
         var cache = new Date().getTime();
         curUrl=_CORS_PATH+'http://json.tvgids.nl/v4/channels';
@@ -18,14 +20,17 @@ function addTVGuide(tvobject, tvObjorg) {
             }, 5000);
           });
 
-    
-    }
+
+    }}
     else {
-      addTVGuide2(tvobject, tvObjorg);
+      addTVGuide2(tvobject, tvObjorg,key);
     }
 }
 
-function addTVGuide2(tvobject, tvObjorg) {
+function addTVGuide2(tvobject, tvObjorg,key) {
+        console.log("Add2: "+key);
+
+        if(key != "MAGYAR"){
         tvObj = tvObjorg;
         var tvitems = []
         var maxitems = 10;
@@ -72,4 +77,28 @@ function addTVGuide2(tvobject, tvObjorg) {
         setTimeout(function () {
             addTVGuide(tvobject, tvObjorg);
         }, (60000 * 5));
+    }
+
+
+
+    else{
+        tvObj = tvObjorg;
+        var tvitems = []
+        var maxitems = 10;
+         console.log(tvObj.channels);
+        if (typeof(tvObj.maxitems) !== 'undefined') maxitems = tvObj.maxitems;
+        curUrl= _CORS_PATH +'https://port.hu/tvapi?date='+moment().format("YYYY-MM-DD")+'&channel_id[]=tvchannel-'+ tvObj.channels.join('&channel_id[]=tvchannel-');
+        $.getJSON(curUrl, function (data) {
+        tvdatas = data.channels;
+        for (num in tvdatas) {
+            tvdata = data.channels[num].programs;
+            $.each( tvdata, function( key, val ) {
+                 console.log(tvdata[key].is_live);
+             if(tvdata[key].is_live){
+            var widget = '<div>' + val['start_time'] + ' - ' + val['end_time'] + '</em> '+ data.channels[num].name + '</em> - <b> ' + val['title'] +' - '+ val['short_description'] + '</b></div>';
+              tvobject.find('.items').append(widget);}
+              });
+        }
+     });
+    }
     }
