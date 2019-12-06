@@ -394,7 +394,7 @@ function handleObjectBlock(block, index, columndiv, width, c) {
         dataId = 'tvguide.' + key;
         classes = 'block_tvguide transbg containstvguide containstvguide' + random;
         appendTvOrCalendarBlock(dataId, classes, width, block, columndiv);
-        addTVGuide($('.containstvguide' + random), block);
+        addTVGuide($('.containstvguide' + random), block, key);  
         getBlockClick('tvguide');
     } else if (block.hasOwnProperty('icalurl')
         || block.hasOwnProperty('calendars')
